@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preload" as="image" href="assets/pool-indoor.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="assets/logo-light.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<script src="./ref-images.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0E1417;color:#ECEAE3;font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  html,body{overflow-x:hidden;max-width:100%}
+  img,iframe{max-width:100%}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:#5AA6C2;color:#0E1417}
+  @keyframes tqFade{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes tqSlow{from{transform:scale(1.08)}to{transform:scale(1)}}
+  @keyframes tqRipple{0%{clip-path:circle(0% at 50% 48%);opacity:.35;transform:scale(1.06)}55%{opacity:1}100%{clip-path:circle(150% at 50% 48%);opacity:1;transform:scale(1)}}
+  [data-strip]::-webkit-scrollbar{display:none}
+  [data-strip]{touch-action:pan-x;overscroll-behavior-x:contain;scroll-padding:0}
+  image-slot{touch-action:pan-x}
+</style>
+</helmet>
+<div style="background:#0E1417;overflow:hidden">
+
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,5vw,64px);backdrop-filter:blur(14px);background:rgba(14,20,23,0.6);border-bottom:1px solid rgba(255,255,255,0.08)">
+    <button onClick="{{ goHome }}" style="display:flex;align-items:center;background:none;border:none;cursor:pointer;padding:0">
+      <img src="assets/logo-light.png" alt="TomAqua — Pool · Wellness · Spa" style="height:34px;width:auto;display:block">
+    </button>
+    <sc-if value="{{ navDesktop }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;align-items:center;gap:clamp(14px,2.2vw,36px)">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <button onClick="{{ item.onClick }}" style="{{ item.style }}" style-hover="color:#5AA6C2">{{ item.label }}</button>
+      </sc-for>
+      <div style="display:flex;align-items:center;gap:8px;padding-left:clamp(8px,1.5vw,18px);border-left:1px solid rgba(255,255,255,0.12)">
+        <button onClick="{{ setSr }}" style="{{ srBtnStyle }}">SR</button>
+        <span style="color:rgba(255,255,255,0.25);font-size:11px">/</span>
+        <button onClick="{{ setEn }}" style="{{ enBtnStyle }}">EN</button>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ navMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Meni" style="background:none;border:none;cursor:pointer;color:#ECEAE3;padding:6px;display:flex;align-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg></button>
+    </sc-if>
+  </nav>
+
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:49;background:rgba(11,15,18,0.97);backdrop-filter:blur(14px);display:flex;flex-direction:column;justify-content:center;padding:88px clamp(24px,7vw,56px) 44px;gap:2px">
+      <button onClick="{{ toggleMenu }}" aria-label="Zatvori" style="position:absolute;top:22px;right:clamp(20px,5vw,40px);background:none;border:none;color:#ECEAE3;font-size:30px;line-height:1;cursor:pointer">✕</button>
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <button onClick="{{ item.onClick }}" style="background:none;border:none;text-align:left;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:clamp(26px,7vw,34px);font-weight:300;color:#ECEAE3;padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.08)">{{ item.label }}</button>
+      </sc-for>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:26px">
+        <button onClick="{{ setSr }}" style="{{ srBtnStyle }}">SR</button>
+        <span style="color:rgba(255,255,255,0.25)">/</span>
+        <button onClick="{{ setEn }}" style="{{ enBtnStyle }}">EN</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ POČETNA ============ -->
+  <div style="{{ homeStyle }}">
+  <main>
+    <header style="position:relative;height:100vh;min-height:660px;display:flex;align-items:flex-end;overflow:hidden;perspective:1400px">
+      <div data-hero-img="" style="position:absolute;inset:-6%;background-image:url('assets/pool-indoor.jpg');background-size:cover;background-position:center;animation:tqSlow 12s ease-out both;transform-style:preserve-3d;transition:transform .35s cubic-bezier(.2,.7,.3,1);will-change:transform"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,20,23,0.55) 0%,rgba(14,20,23,0.15) 35%,rgba(14,20,23,0.85) 100%)"></div>
+      <div style="position:absolute;top:50%;right:clamp(20px,5vw,64px);transform:translateY(-50%) rotate(90deg);transform-origin:right center;font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(236,234,227,0.6)">Pool · Wellness · Spa</div>
+      <div style="position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) clamp(56px,8vh,96px);max-width:1100px;animation:tqFade 1s ease-out both">
+        <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#5AA6C2;margin-bottom:22px">TomAqua</div>
+          <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(42px,7vw,100px);line-height:0.98;letter-spacing:-0.01em">Vaš partner u svetu<br><span style="font-style:italic;color:#E9E4D8">odmora i relaksacije!</span></h1>
+          <p style="max-width:540px;margin-top:26px;font-size:17px;line-height:1.6;color:#C2CAC9;font-weight:300">Otkrijte oazu relaksacije u udobnosti svog doma sa našim vrhunskim bazenima, saunama i spa centrima. Uživajte u luksuznom doživljaju odmora i revitalizacije koji donose naši proizvodi.</p>
+        </sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#5AA6C2;margin-bottom:22px">Your partner in rest &amp; relaxation</div>
+          <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(42px,7vw,100px);line-height:0.98;letter-spacing:-0.01em">Water as the<br><span style="font-style:italic;color:#E9E4D8">highest form of luxury.</span></h1>
+          <p style="max-width:540px;margin-top:26px;font-size:17px;line-height:1.6;color:#C2CAC9;font-weight:300">Discover an oasis of calm in your own home — premium pools, saunas and spa centres, built bespoke and turnkey.</p>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:38px">
+          <button onClick="{{ goReference }}" style="padding:15px 30px;background:#5AA6C2;color:#0E1417;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;font-family:Jost,sans-serif;transition:background .25s" style-hover="background:#7FC0D8"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Pogledajte radove</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">View our work</sc-if></button>
+        </div>
+      </div>
+    </header>
+
+    <section style="padding:clamp(72px,12vh,140px) clamp(20px,5vw,64px);max-width:1180px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:{{ colsHome }};gap:clamp(28px,5vw,72px);align-items:end">
+        <div>
+          <div style="font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:#5AA6C2;margin-bottom:18px">TomAqua</div>
+          <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,4vw,54px);line-height:1.08">Mesto gde se telo i um vraćaju u ravnotežu.</h2></sc-if>
+          <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,4vw,54px);line-height:1.08">A place where body and mind return to balance.</h2></sc-if>
+        </div>
+        <div>
+          <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><p style="font-size:17px;line-height:1.7;color:#B9C2C1;font-weight:300">Bilo da želite ceo Spa &amp; Wellness centar ili pojedinačne segmente naših usluga — zajedno stvaramo nešto izvanredno. Uživajte u luksuznom doživljaju odmora i revitalizacije koji donose naši proizvodi.</p></sc-if>
+          <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><p style="font-size:17px;line-height:1.7;color:#B9C2C1;font-weight:300">Whether you want a complete Spa &amp; Wellness centre or individual parts of our services — together we create something extraordinary. Enjoy a luxurious experience of rest and revitalisation.</p></sc-if>
+        </div>
+      </div>
+      <sc-if value="{{ showStats }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,4vw,56px);margin-top:clamp(40px,7vh,80px);padding-top:clamp(28px,5vh,56px);border-top:1px solid rgba(255,255,255,0.1)">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,64px);font-weight:300;color:#5AA6C2">15+</div><div style="font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#93A0A0;margin-top:6px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">godina iskustva</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">years of experience</sc-if></div></div>
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,64px);font-weight:300;color:#5AA6C2">200+</div><div style="font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#93A0A0;margin-top:6px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">realizovanih projekata</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">completed projects</sc-if></div></div>
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,64px);font-weight:300;color:#5AA6C2">100%</div><div style="font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#93A0A0;margin-top:6px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">rad po meri</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">bespoke work</sc-if></div></div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section style="padding:0 clamp(20px,5vw,64px) clamp(72px,12vh,140px);max-width:1280px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(16px,2.5vw,28px)">
+        <div style="position:relative;aspect-ratio:16/11;overflow:hidden;background:#0E1417">
+          <div style="position:absolute;inset:0;background-image:url('assets/home-bazeni.jpeg');background-size:cover;background-position:center;transition:transform .9s ease" style-hover="transform:scale(1.05)"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(11,15,18,0.92) 100%);pointer-events:none"></div>
+          <button onClick="{{ goBazeni }}" style="position:absolute;left:28px;right:28px;bottom:26px;z-index:2;background:none;border:none;padding:0;cursor:pointer;text-align:left"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5AA6C2;margin-bottom:8px">01</div><div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:400;color:#ECEAE3"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Bazeni →</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Pools →</sc-if></div></button>
+        </div>
+        <div style="position:relative;aspect-ratio:16/11;overflow:hidden;background:#0E1417">
+          <div style="position:absolute;inset:0;background-image:url('assets/home-wellness.jpeg');background-size:cover;background-position:center;transition:transform .9s ease" style-hover="transform:scale(1.05)"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(11,15,18,0.92) 100%);pointer-events:none"></div>
+          <button onClick="{{ goWellness }}" style="position:absolute;left:28px;right:28px;bottom:26px;z-index:2;background:none;border:none;padding:0;cursor:pointer;text-align:left"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5AA6C2;margin-bottom:8px">02</div><div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:400;color:#ECEAE3">Wellness &amp; Spa →</div></button>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:clamp(56px,9vh,110px) clamp(20px,5vw,64px);background:#0B0F12;border-top:1px solid rgba(255,255,255,0.06)">
+      <div style="max-width:1180px;margin:0 auto;text-align:center">
+        <div style="font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:#5AA6C2;margin-bottom:22px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Neki od vodećih brendova sa kojima sarađujemo</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Some of the leading brands we work with</sc-if></div>
+        <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(24px,3.2vw,40px);line-height:1.14;max-width:760px;margin:0 auto">Sa ponosom koristimo opremu vodećih svetskih brendova.</h2></sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(24px,3.2vw,40px);line-height:1.14;max-width:760px;margin:0 auto">We proudly work with equipment from the world's leading brands.</h2></sc-if>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:clamp(18px,3vw,50px);margin-top:clamp(34px,5vh,56px)">
+          <sc-for list="{{ brands }}" as="b" hint-placeholder-count="7"><span style="font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.3vw,30px);color:#7E8A89;transition:color .25s" style-hover="color:#ECEAE3">{{ b }}</span></sc-for>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <!-- ============ BAZENI ============ -->
+  <div style="{{ bazeniStyle }}">
+  <main>
+    <header style="position:relative;height:52vh;min-height:380px;display:flex;align-items:flex-end;overflow:hidden">
+      <div style="position:absolute;inset:0;background:#0E1417 url('assets/bazeni-header.jpeg') center/cover no-repeat"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,20,23,0.5) 0%,rgba(14,20,23,0.85) 100%);pointer-events:none"></div>
+      <div style="position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) clamp(40px,6vh,72px)">
+        <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#5AA6C2;margin-bottom:16px">01 — <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Bazeni</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Pools</sc-if></div>
+        <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(40px,6vw,84px);line-height:1">Bazeni po meri.</h1></sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(40px,6vw,84px);line-height:1">Bespoke pools.</h1></sc-if>
+      </div>
+    </header>
+    <section style="padding:clamp(56px,9vh,120px) clamp(20px,5vw,64px);max-width:1180px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:{{ cols2 }};gap:clamp(32px,6vw,90px);align-items:center">
+        <div>
+          <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">
+            <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(28px,3.6vw,48px);line-height:1.1;margin-bottom:24px">Za dom i poslovni prostor.</h2>
+            <p style="font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">Unutrašnji i spoljašnji, infinity i klasični — svaki bazen projektujemo prema prostoru, ambijentu i vašem načinu života. Kompletna izvedba: konstrukcija, filtracija, grejanje, rasveta i oprema, po sistemu ključ u ruke.</p>
+          </sc-if>
+          <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">
+            <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(28px,3.6vw,48px);line-height:1.1;margin-bottom:24px">For home and business.</h2>
+            <p style="font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">Indoor and outdoor, infinity and classic — every pool is designed around the space, the setting and the way you live. Full turnkey delivery: structure, filtration, heating, lighting and equipment.</p>
+          </sc-if>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:32px">
+            <span style="padding:9px 16px;border:1px solid rgba(255,255,255,0.14);font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:#C7CFCE">Infinity</span>
+            <span style="padding:9px 16px;border:1px solid rgba(255,255,255,0.14);font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:#C7CFCE"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Unutrašnji</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Indoor</sc-if></span>
+            <span style="padding:9px 16px;border:1px solid rgba(255,255,255,0.14);font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:#C7CFCE"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Spoljašnji</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Outdoor</sc-if></span>
+            <span style="padding:9px 16px;border:1px solid rgba(255,255,255,0.14);font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:#C7CFCE"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Đakuzi</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Jacuzzi</sc-if></span>
+            <span style="padding:9px 16px;border:1px solid rgba(255,255,255,0.14);font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:#C7CFCE"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Održavanje</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Maintenance</sc-if></span>
+          </div>
+          <button onClick="{{ goKontakt }}" style="margin-top:38px;padding:15px 30px;background:#5AA6C2;color:#0E1417;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;font-family:Jost,sans-serif;transition:background .25s" style-hover="background:#7FC0D8"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Zatražite ponudu</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Request a quote</sc-if></button>
+        </div>
+        <div style="aspect-ratio:4/5;background:#0E1417 url('assets/bazeni-side.jpeg') center/cover no-repeat;border-radius:4px;overflow:hidden"></div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <!-- ============ WELLNESS & SPA ============ -->
+  <div style="{{ wellnessStyle }}">
+  <main>
+    <header style="position:relative;height:52vh;min-height:380px;display:flex;align-items:flex-end;overflow:hidden">
+      <div style="position:absolute;inset:0;background:#0E1417 url('assets/well-header.jpeg') no-repeat;background-size:cover;background-position:{{ wellHeaderPos }}"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,20,23,0.45) 0%,rgba(14,20,23,0.85) 100%);pointer-events:none"></div>
+      <div style="position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) clamp(40px,6vh,72px)">
+        <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#5AA6C2;margin-bottom:16px">02 — Wellness &amp; Spa</div>
+        <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(40px,6vw,84px);line-height:1">Oaze koje leče čula.</h1></sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(40px,6vw,84px);line-height:1">Oases that heal the senses.</h1></sc-if>
+      </div>
+    </header>
+    <section style="padding:clamp(56px,9vh,120px) clamp(20px,5vw,64px);max-width:1320px;margin:0 auto">
+      <div style="max-width:560px;margin-bottom:clamp(36px,5vh,56px)">
+        <div style="font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:#5AA6C2;margin-bottom:16px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Galerija</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Gallery</sc-if></div>
+        <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><p style="font-size:16px;line-height:1.7;color:#B9C2C1;font-weight:300">Saune, slane sobe, parna kupatila i kompletni spa centri — trenuci mira uhvaćeni u kadru.</p></sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><p style="font-size:16px;line-height:1.7;color:#B9C2C1;font-weight:300">Saunas, salt rooms, steam baths and complete spa centres — moments of calm, captured.</p></sc-if>
+      </div>
+      <div style="position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#0B0F12;box-shadow:0 30px 80px rgba(0,0,0,0.45)">
+        {{ galleryStage }}
+        <sc-if value="{{ galleryEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px">
+            <div style="font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#5C6665;line-height:1.8"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Ubacite slike ispod —<br>ovde se smenjuju automatski</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Add photos below —<br>they cycle here automatically</sc-if></div>
+          </div>
+        </sc-if>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:38%;background:linear-gradient(180deg,transparent,rgba(8,11,13,0.55));pointer-events:none"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:{{ galCols }};gap:6px;margin-top:6px">
+        <div data-wellthumb="" style="aspect-ratio:1/1;background:#0E1417 url('assets/well-g1.jpeg') center/cover no-repeat;overflow:hidden"></div>
+        <div data-wellthumb="" style="aspect-ratio:1/1;background:#0E1417 url('assets/well-g2.jpeg') center/cover no-repeat;overflow:hidden"></div>
+        <div data-wellthumb="" style="aspect-ratio:1/1;background:#0E1417 url('assets/well-g3.jpeg') center/cover no-repeat;overflow:hidden"></div>
+        <div data-wellthumb="" style="aspect-ratio:1/1;background:#0E1417 url('assets/well-g4.jpeg') center/cover no-repeat;overflow:hidden"></div>
+        <div data-wellthumb="" style="aspect-ratio:1/1;background:#0E1417 url('assets/well-g5.jpeg') center/cover no-repeat;overflow:hidden"></div>
+        <div data-wellthumb="" style="aspect-ratio:1/1;background:#0E1417 url('assets/well-g6.jpeg') center/cover no-repeat;overflow:hidden"></div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <!-- ============ REFERENCE ============ -->
+  <div style="{{ referenceStyle }}">
+  <main style="position:relative">
+    <div style="position:fixed;inset:0;z-index:0;background-image:url('assets/ref-bg.png');background-size:cover;background-position:center;filter:blur(6px) brightness(0.6);transform:scale(1.05)"></div>
+    <div style="position:fixed;inset:0;z-index:0;background:rgba(11,15,18,0.42)"></div>
+    <div style="position:relative;z-index:1">
+    <section style="padding:calc(clamp(56px,9vh,110px) + 70px) clamp(20px,5vw,64px) clamp(56px,9vh,110px);max-width:1320px;margin:0 auto">
+      <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#5AA6C2;margin-bottom:16px">03 — <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Reference</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Projects</sc-if></div>
+      <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:1;margin-bottom:24px">Izabrani radovi.</h1></sc-if>
+      <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(40px,6vw,80px);line-height:1;margin-bottom:24px">Selected work.</h1></sc-if>
+      <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><p style="max-width:580px;font-size:16px;line-height:1.7;color:#C2CAC9;font-weight:300;margin-bottom:clamp(36px,5vh,56px)">Deo naših realizovanih projekata širom Srbije i regiona — bazeni, saune i kompletni spa prostori. Slike dodajemo zajedno: prevucite fotografiju u odgovarajuće polje.</p></sc-if>
+      <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><p style="max-width:580px;font-size:16px;line-height:1.7;color:#C2CAC9;font-weight:300;margin-bottom:clamp(36px,5vh,56px)">A selection of our completed projects across Serbia and the region — pools, saunas and complete spa spaces. We add the photos together: drag an image onto each slot.</p></sc-if>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:clamp(32px,4vw,60px);margin-bottom:clamp(40px,5vw,72px)">
+        <sc-for list="{{ projectsFeatured }}" as="p" hint-placeholder-count="2">
+          <div>
+            <div style="position:relative">
+              <button onClick="{{ scrollPrev }}" aria-label="Prev" style="position:absolute;top:50%;left:14px;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.4);color:#ECEAE3;font-size:20px;line-height:1;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417">‹</button>
+              <button onClick="{{ scrollNext }}" aria-label="Next" style="position:absolute;top:50%;right:14px;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.4);color:#ECEAE3;font-size:20px;line-height:1;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417">›</button>
+              <div data-strip="" style="display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none">
+                <sc-for list="{{ p.slots }}" as="s" hint-placeholder-count="3">
+                  <div data-cell="" style="position:relative;flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;aspect-ratio:16/10;background:#0E1417;overflow:hidden;border-radius:16px"><image-slot id="{{ s.sid }}" src="{{ s.src }}" shape="rounded" radius="16" placeholder="Slika / Photo"></image-slot><button onClick="{{ openLightbox }}" aria-label="Open" style="position:absolute;bottom:12px;right:12px;z-index:4;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.5);color:#ECEAE3;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg></button></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.14)">
+              <div>
+                <div style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(26px,2.6vw,34px);line-height:1.05">{{ p.title }}</div>
+                <sc-if value="{{ p.hasLocation }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#93A0A0;margin-top:6px">{{ p.location }}</div></sc-if>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px 20px;margin-top:14px">
+              <sc-for list="{{ p.items }}" as="a" hint-placeholder-count="4"><span style="font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8B9897">{{ a.label }}</span></sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(28px,3vw,44px)">
+        <sc-for list="{{ projectsRest }}" as="p" hint-placeholder-count="9">
+          <div>
+            <div style="position:relative">
+              <sc-if value="{{ p.multi }}" hint-placeholder-val="{{ true }}"><button onClick="{{ scrollPrev }}" aria-label="Prev" style="position:absolute;top:50%;left:12px;transform:translateY(-50%);z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.4);color:#ECEAE3;font-size:19px;line-height:1;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417">‹</button>
+              <button onClick="{{ scrollNext }}" aria-label="Next" style="position:absolute;top:50%;right:12px;transform:translateY(-50%);z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.4);color:#ECEAE3;font-size:19px;line-height:1;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417">›</button></sc-if>
+              <div data-strip="" style="display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none">
+                <sc-for list="{{ p.slots }}" as="s" hint-placeholder-count="3">
+                  <div data-cell="" style="position:relative;flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;aspect-ratio:4/3;background:#0E1417;overflow:hidden;border-radius:16px"><image-slot id="{{ s.sid }}" src="{{ s.src }}" shape="rounded" radius="16" placeholder="Slika / Photo"></image-slot><button onClick="{{ openLightbox }}" aria-label="Open" style="position:absolute;bottom:10px;right:10px;z-index:4;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.5);color:#ECEAE3;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg></button></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.14)">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(22px,2vw,27px);line-height:1.05">{{ p.title }}</div>
+              <sc-if value="{{ p.hasLocation }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:#93A0A0;margin-top:5px">{{ p.location }}</div></sc-if>
+              <div style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:11px">
+                <sc-for list="{{ p.items }}" as="a" hint-placeholder-count="2"><span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#8B9897">{{ a.label }}</span></sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    <sc-if value="{{ hasLightbox }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:100;background:rgba(8,11,13,0.92);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:clamp(20px,5vw,72px);cursor:zoom-out">
+        {{ lightboxImg }}
+        <button onClick="{{ closeLightbox }}" aria-label="Close" style="position:absolute;top:24px;right:24px;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);background:rgba(14,20,23,0.5);color:#ECEAE3;font-size:22px;line-height:1;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s" style-hover="background:#5AA6C2;border-color:#5AA6C2;color:#0E1417">✕</button>
+      </div>
+    </sc-if>
+    </div>
+  </main>
+  </div>
+  <div style="{{ onamaStyle }}">
+  <main style="position:relative">
+    <div style="position:fixed;inset:0;z-index:0;background:#0E1417 url('assets/onama-header.jpeg') no-repeat;background-size:cover;background-position:{{ onamaHeaderPos }};filter:blur(7px) brightness(0.62);transform:scale(1.06)"></div>
+    <div style="position:fixed;inset:0;z-index:0;background:rgba(11,15,18,0.42)"></div>
+    <div style="position:relative;z-index:1">
+    <header style="position:relative;min-height:32vh;padding-top:clamp(90px,12vh,130px);display:flex;align-items:flex-end;overflow:hidden">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,20,23,0.1) 0%,rgba(14,20,23,0.55) 100%);pointer-events:none"></div>
+      <div style="position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) clamp(40px,6vh,72px)">
+        <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#5AA6C2;margin-bottom:16px">04 — <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">O nama</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">About us</sc-if></div>
+        <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(38px,5.5vw,80px);line-height:1.02">Prostori koji nadmašuju očekivanja.</h1></sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(38px,5.5vw,80px);line-height:1.02">Spaces that exceed expectations.</h1></sc-if>
+      </div>
+    </header>
+    <section style="padding:clamp(24px,3.5vh,44px) clamp(20px,5vw,64px) clamp(56px,9vh,120px);max-width:1180px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:{{ colsOnama }};gap:clamp(32px,6vw,90px);align-items:center">
+        <div>
+          <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-bottom:26px"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5AA6C2;margin-bottom:10px">Misija</div><p style="font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">Pružamo vrhunska rešenja koja transformišu svakodnevne prostore u oaze udobnosti i luksuza. Posvećeni smo inovacijama, kvalitetu i stvaranju prostora koji oživljavaju vaše jedinstvene vizije.</p></div>
+            <div style="margin-bottom:26px"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5AA6C2;margin-bottom:10px">Vizija</div><p style="font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">Vidimo se kao vodeći inovatori u industriji — brend koji svaki trenutak pretvara u nezaboravno iskustvo, istražujući nove horizonte komfora i dizajna.</p></div>
+            <p style="color:#B9C2C1;font-weight:300;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.5">Mlad i dinamičan tim — mladi, ali iskusni, spremni da kreiraju budućnost prostora.</p>
+          </sc-if>
+          <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:26px"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5AA6C2;margin-bottom:10px">Mission</div><p style="font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">We deliver premium solutions that transform everyday spaces into oases of comfort and luxury. We are devoted to innovation, quality and creating spaces that bring your unique visions to life.</p></div>
+            <div style="margin-bottom:26px"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5AA6C2;margin-bottom:10px">Vision</div><p style="font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">We see ourselves as leading innovators in the industry — a brand that turns every moment into an unforgettable experience, exploring new horizons of comfort and design.</p></div>
+            <p style="color:#B9C2C1;font-weight:300;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.5">A young, dynamic team — young, yet experienced, ready to shape the future of space.</p>
+          </sc-if>
+        </div>
+        <div style="position:relative;aspect-ratio:4/5">
+          <div style="position:absolute;inset:-4px;background:url('assets/onama-side.jpeg') center/cover no-repeat;filter:blur(6px);border-radius:16px;opacity:0.5"></div>
+          <div style="position:absolute;inset:0;background:url('assets/onama-side.jpeg') center/cover no-repeat;border-radius:12px"></div>
+        </div>
+      </div>
+      <div style="margin-top:clamp(48px,7vh,90px);padding-top:clamp(36px,5vh,56px)">
+        <div style="width:44px;height:1px;background:rgba(90,166,194,0.55);margin-bottom:18px"></div><div style="font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:#5AA6C2;margin-bottom:clamp(24px,4vh,40px)"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Naše vrednosti</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Our values</sc-if></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:clamp(24px,3vw,44px)">
+          <sc-for list="{{ values }}" as="v" hint-placeholder-count="4">
+            <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;margin-bottom:12px;color:#ECEAE3">{{ v.t }}</div><p style="font-size:17px;line-height:1.7;color:#C3CCCB;font-weight:300">{{ v.d }}</p></div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+    </div>
+  </main>
+  </div>
+
+  <!-- ============ KONTAKT ============ -->
+  <div style="{{ kontaktStyle }}">
+  <main>
+    <section style="padding:calc(clamp(72px,12vh,150px) + 60px) clamp(20px,5vw,64px) clamp(72px,12vh,150px);background:#121A1E;min-height:80vh;display:flex;align-items:center">
+      <div style="max-width:1180px;margin:0 auto;width:100%">
+        <div style="display:grid;grid-template-columns:{{ cols2 }};gap:clamp(40px,6vw,84px);align-items:start">
+          <div>
+            <div style="font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:#5AA6C2;margin-bottom:22px">05 — <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Kontakt</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Contact</sc-if></div>
+            <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(32px,4.4vw,60px);line-height:1.02">Stvorimo vašu<br>oazu — zajedno.</h1><p style="max-width:440px;margin-top:22px;font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">Javite nam se za konsultaciju bez obaveza. Odgovaramo u najkraćem roku.</p></sc-if>
+            <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(32px,4.4vw,60px);line-height:1.02">Let's create your<br>oasis — together.</h1><p style="max-width:440px;margin-top:22px;font-size:16.5px;line-height:1.7;color:#B9C2C1;font-weight:300">Reach out for a no-obligation consultation. We reply as soon as possible.</p></sc-if>
+            <div style="display:flex;flex-direction:column;gap:16px;margin-top:clamp(30px,4.5vh,44px)">
+              <div style="padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.12)"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#93A0A0;margin-bottom:7px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Adresa</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Address</sc-if></div><div style="font-family:'Cormorant Garamond',serif;font-size:22px">Milana Rakića 20, 11050 Beograd</div></div>
+              <a href="mailto:tomislav@tomaqua.rs" style="display:block;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.12)" style-hover="border-color:#5AA6C2"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#93A0A0;margin-bottom:7px">Tomislav</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px">tomislav@tomaqua.rs</div></a>
+              <a href="mailto:natalija@tomaqua.rs" style="display:block;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.12)" style-hover="border-color:#5AA6C2"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#93A0A0;margin-bottom:7px">Natalija</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px">natalija@tomaqua.rs</div></a>
+              <a href="https://instagram.com/tomaqua_spa" target="_blank" rel="noopener" style="display:block;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.12)" style-hover="border-color:#5AA6C2"><div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#93A0A0;margin-bottom:7px">Instagram</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px">@tomaqua_spa</div></a>
+            </div>
+            <div style="margin-top:22px;padding:16px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px"><sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}"><p style="font-size:13.5px;line-height:1.65;color:#93A0A0;font-weight:300">Poseta bez najave nije moguća. Ne vršimo prodaju fizičkim licima.</p></sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><p style="font-size:13.5px;line-height:1.65;color:#93A0A0;font-weight:300">Visits are by appointment only. We do not sell to private individuals.</p></sc-if></div>
+          </div>
+          <div>
+            <sc-if value="{{ contactOpen }}" hint-placeholder-val="{{ true }}">
+              <form onSubmit="{{ submitContact }}" style="display:flex;flex-direction:column;gap:14px">
+                <input name="ime" required="{{ true }}" placeholder="{{ cName }}" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);border-radius:7px;color:#ECEAE3;font-family:Jost,sans-serif;font-size:15px" style-focus="border-color:#5AA6C2;outline:none">
+                <input name="email" type="email" required="{{ true }}" placeholder="{{ cEmail }}" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);border-radius:7px;color:#ECEAE3;font-family:Jost,sans-serif;font-size:15px" style-focus="border-color:#5AA6C2;outline:none">
+                <input name="telefon" placeholder="{{ cPhone }}" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);border-radius:7px;color:#ECEAE3;font-family:Jost,sans-serif;font-size:15px" style-focus="border-color:#5AA6C2;outline:none">
+                <textarea name="poruka" rows="5" required="{{ true }}" placeholder="{{ cMsg }}" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);border-radius:7px;color:#ECEAE3;font-family:Jost,sans-serif;font-size:15px;resize:vertical" style-focus="border-color:#5AA6C2;outline:none"></textarea>
+                <button type="submit" style="margin-top:4px;padding:15px 30px;background:#5AA6C2;color:#0E1417;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;font-weight:500;border:none;border-radius:7px;cursor:pointer;transition:background .2s" style-hover="background:#6FB8D2">{{ cSend }}</button>
+              </form>
+            </sc-if>
+            <sc-if value="{{ contactSent }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:clamp(28px,4vw,40px);background:rgba(90,166,194,0.08);border:1px solid rgba(90,166,194,0.3);border-radius:10px">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:12px;color:#ECEAE3">{{ cSentTitle }}</div>
+                <p style="font-size:15px;line-height:1.7;color:#B9C2C1;font-weight:300;margin-bottom:22px">{{ cSentMsg }}</p>
+                <button onClick="{{ resetContact }}" style="padding:12px 26px;background:none;color:#5AA6C2;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;font-weight:500;border:1px solid rgba(90,166,194,0.5);border-radius:7px;cursor:pointer" style-hover="background:rgba(90,166,194,0.12)">{{ cAgain }}</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="margin-top:clamp(40px,6vh,72px);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)">
+          <iframe title="TomAqua lokacija" src="https://www.google.com/maps?q=Milana%20Raki%C4%87a%2020,%2011050%20Beograd&output=embed" width="100%" height="360" style="border:0;display:block;filter:grayscale(0.35) contrast(1.05) brightness(0.92)" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <footer style="padding:44px clamp(20px,5vw,64px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;background:#0B0F12;border-top:1px solid rgba(255,255,255,0.06)">
+    <button onClick="{{ goHome }}" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center"><img src="assets/logo-light.png" alt="TomAqua" style="height:26px;width:auto;display:block;opacity:0.85"></button>
+    <div style="font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:#6E7A79">Pool · Wellness · Spa</div>
+    <div style="font-size:11.5px;letter-spacing:0.06em;color:#6E7A79">© 2026 TomAqua. <sc-if value="{{ isSr }}" hint-placeholder-val="{{ true }}">Sva prava zadržana.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">All rights reserved.</sc-if></div>
+  </footer>
+
+</div>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0E1417"/><rect x="18" y="30" width="10" height="40" fill="#ECEAE3"/><path d="M32 70 L44 30 L54 30 L42 70 Z" fill="#ECEAE3"/><rect x="18" y="24" width="9" height="9" fill="#5AA6C2"/><text x="62" y="56" font-family="Georgia,serif" font-size="20" fill="#ECEAE3" text-anchor="middle">TA</text></svg></template></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sr&quot;,&quot;en&quot;],&quot;default&quot;:&quot;sr&quot;,&quot;tsType&quot;:&quot;'sr'|'en'&quot;,&quot;section&quot;:&quot;Sadržaj&quot;},&quot;showStats&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sadržaj&quot;},&quot;wellHeaderPos&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;center 40%&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Wellness &amp; Spa&quot;},&quot;onamaHeaderPos&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;center 40%&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;O nama&quot;}}">
+class Component extends DCLogic {
+  state = { lang: this._initLang(), page: 'home', lightbox: null, galIndex: 0, contactSent: false, vw: (typeof window !== 'undefined' ? window.innerWidth : 1280), menuOpen: false };
+  _initLang() {
+    try { const s = localStorage.getItem('tq_lang'); if (s) return s; } catch (e) {}
+    return this.props.defaultLang || 'sr';
+  }
+  setLang(l) {
+    try { localStorage.setItem('tq_lang', l); } catch (e) {}
+    this.setState({ lang: l });
+  }
+  go(p) {
+    this.setState({ page: p, menuOpen: false });
+    if (typeof window !== 'undefined') requestAnimationFrame(() => window.scrollTo(0, 0));
+  }
+  componentDidMount() {
+    this._onMove = (e) => {
+      const el = document.querySelector('[data-hero-img]');
+      if (!el) return;
+      const w = window.innerWidth, h = window.innerHeight;
+      const rx = ((e.clientY / h) - 0.5) * -5;
+      const ry = ((e.clientX / w) - 0.5) * 5;
+      el.style.transform = 'rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale(1.06)';
+    };
+    window.addEventListener('mousemove', this._onMove);
+    this._onResize = () => {
+      if (this._rAF) return;
+      this._rAF = requestAnimationFrame(() => { this._rAF = null; this.setState({ vw: window.innerWidth }); });
+    };
+    window.addEventListener('resize', this._onResize);
+    this.setState({ vw: window.innerWidth });
+    this._galTimer = setInterval(() => {
+      if (this.state.page !== 'wellness') return;
+      const srcs = this._gallerySrcs();
+      if (srcs.length > 1) this.setState((s) => ({ galIndex: (s.galIndex || 0) + 1 }));
+      else this.forceUpdate();
+    }, 3800);
+  }
+  componentWillUnmount() {
+    if (this._onMove) window.removeEventListener('mousemove', this._onMove);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+    if (this._galTimer) clearInterval(this._galTimer);
+  }
+  _scrollByOne(btn, dir) {
+    const s = btn.parentElement.querySelector('[data-strip]');
+    if (!s) return;
+    const cells = s.querySelectorAll('[data-cell]');
+    if (!cells.length) return;
+    const gap = parseFloat(getComputedStyle(s).columnGap || getComputedStyle(s).gap || '0') || 0;
+    const step = cells[0].offsetWidth + gap;
+    const idx = Math.round(s.scrollLeft / step);
+    const next = Math.max(0, Math.min(cells.length - 1, idx + dir));
+    s.scrollTo({ left: next * step, behavior: 'smooth' });
+  }
+  _gallerySrcs() {
+    const out = [];
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('[data-wellthumb]').forEach((el) => {
+        const bg = getComputedStyle(el).backgroundImage || '';
+        const m = bg.match(/url\((['"]?)(.*?)\1\)/);
+        if (m && m[2]) out.push(m[2]);
+      });
+    }
+    if (out.length) return out;
+    return [
+      'assets/well-g1.jpeg','assets/well-g2.jpeg','assets/well-g3.jpeg',
+      'assets/well-g4.jpeg','assets/well-g5.jpeg','assets/well-g6.jpeg',
+    ];
+  }
+  renderVals() {
+    const { lang, page } = this.state;
+    this._galSrcsSnapshot = page === 'wellness' ? this._gallerySrcs() : [];
+    const isSr = lang === 'sr';
+    const L = (a, b) => (isSr ? a : b);
+    const vw = this.state.vw || 1280;
+    const narrowNav = vw < 1000;
+    const cols2 = vw < 820 ? '1fr' : 'minmax(0,1fr) minmax(0,1fr)';
+    const colsHome = vw < 820 ? '1fr' : 'minmax(0,1fr) minmax(0,1.15fr)';
+    const colsOnama = vw < 820 ? '1fr' : 'minmax(0,1fr) minmax(0,1.05fr)';
+    const galCols = vw < 720 ? 'repeat(3,1fr)' : 'repeat(6,1fr)';
+    const refImg = (typeof window !== 'undefined' && window.TQ_REF) || {};
+    const defs = [
+      { p: 'home', label: L('Početna', 'Home') },
+      { p: 'bazeni', label: L('Bazeni', 'Pools') },
+      { p: 'wellness', label: 'Wellness & Spa' },
+      { p: 'reference', label: L('Reference', 'Projects') },
+      { p: 'onama', label: L('O nama', 'About') },
+      { p: 'kontakt', label: L('Kontakt', 'Contact') },
+    ];
+    const linkBase = 'font-size:12.5px;letter-spacing:0.2em;text-transform:uppercase;transition:color .25s;cursor:pointer;background:none;border:none;font-family:Jost,sans-serif;padding:0;';
+    const navItems = defs.map((d) => ({
+      label: d.label,
+      onClick: () => this.go(d.p),
+      style: linkBase + (page === d.p ? 'color:#5AA6C2;' : 'color:#C7CFCE;'),
+    }));
+    const amen = {
+      sauna: L('Sauna', 'Sauna'),
+      slana: L('Slana soba', 'Salt room'),
+      parno: L('Parno kupatilo', 'Steam bath'),
+      bazen: L('Bazen', 'Pool'),
+      djakuzi: L('Đakuzi', 'Jacuzzi'),
+      relax: L('Relax klupe', 'Relax benches'),
+      tepi: L('Tepidarijumi', 'Tepidarium'),
+      himso: L('Himalajska so', 'Himalayan salt'),
+      privbazen: L('Privatni bazen', 'Private pool'),
+    };
+    const mk = (id, title, keys, count, location, slots, srcs) => {
+      const n = Math.max(1, slots || 3);
+      return {
+        id,
+        title,
+        count: count || '',
+        location: location || '',
+        hasLocation: !!location,
+        items: keys.map((k) => ({ label: amen[k] })),
+        slots: Array.from({ length: n }, (_, i) => ({ sid: id + '-s' + i, src: refImg[id + '-s' + i] || (srcs && srcs[i]) || '' })),
+        multi: n > 1,
+      };
+    };
+    const projectsAll = [
+      mk('tq-titova', 'Titova vila', ['sauna', 'slana', 'parno', 'bazen', 'djakuzi', 'relax', 'tepi'], '68'),
+      mk('tq-gomax', 'Gomax 2', ['sauna', 'slana', 'parno', 'djakuzi', 'relax', 'tepi'], '18'),
+      mk('tq-angels', 'Angels Nest', ['bazen'], '1'),
+      mk('tq-brvnara', 'Brvnara Ljubomir', ['sauna', 'himso'], '4'),
+      mk('tq-visnjicka', 'Višnjička banja', ['privbazen'], '2'),
+      mk('tq-bugijevo', 'Bugijevo sokače', ['sauna', 'parno', 'bazen', 'djakuzi'], '6'),
+      mk('tq-frankfurt', 'Frankfurt', ['bazen', 'parno'], '2', L('Nemačka', 'Germany')),
+      mk('tq-devojacki', 'Devojački bunar', ['bazen'], '1'),
+      mk('tq-slanci', 'Slanci', ['bazen'], '1'),
+      mk('tq-drenovac', 'Drenovac', ['bazen'], '4'),
+      mk('tq-progar', 'Progar', ['bazen'], '3'),
+      mk('tq-pino', 'Pino Sivestre', ['sauna', 'slana', 'djakuzi'], '10'),
+      mk('tq-senjak', 'Senjak', ['bazen'], '4'),
+      mk('tq-valjevo', 'Valjevo', ['sauna'], '1'),
+      mk('tq-barajevo', 'Barajevo', ['bazen'], '', '', 2, ['', 'assets/ref-barajevo-2.jpeg']),
+      mk('tq-sabac', 'Šabac', ['bazen'], '', '', 1, ['assets/ref-sabac.jpeg']),
+      mk('tq-kragujevac', 'Kragujevac', ['bazen'], '2', '', 3, ['assets/ref-kragujevac-4.jpeg', 'assets/ref-kragujevac-2.jpeg', 'assets/ref-kragujevac-1.jpeg']),
+    ];
+    const projectsFeatured = projectsAll.slice(0, 2);
+    const projectsRest = projectsAll.slice(2);
+    const values = isSr
+      ? [
+          { t: 'Inovacija', d: 'Neprestano tragamo za novim i kreativnim rešenjima.' },
+          { t: 'Kvalitet', d: 'Visoki standardi u svemu — od materijala do usluge.' },
+          { t: 'Klijent u središtu', d: 'Posvećeni vašim potrebama, željama i zadovoljstvu.' },
+          { t: 'Transparentnost', d: 'Odnosi zasnovani na poverenju i otvorenoj komunikaciji.' },
+        ]
+      : [
+          { t: 'Innovation', d: 'We constantly seek new and creative solutions.' },
+          { t: 'Quality', d: 'High standards in everything — from materials to service.' },
+          { t: 'Client at the centre', d: 'Devoted to your needs, wishes and satisfaction.' },
+          { t: 'Transparency', d: 'Relationships built on trust and open communication.' },
+        ];
+    const brands = ['Astral Pool', 'AcquaSource', 'Squamers', 'Pahlen', 'Zodiac', 'Huum', 'EOS'];
+    const btn = 'background:none;border:none;cursor:pointer;font-family:Jost,sans-serif;font-size:12px;letter-spacing:0.14em;padding:2px;transition:color .2s;';
+    return {
+      isSr,
+      isEn: !isSr,
+      isHome: page === 'home',
+      isBazeni: page === 'bazeni',
+      isWellness: page === 'wellness',
+      isReference: page === 'reference',
+      isOnama: page === 'onama',
+      isKontakt: page === 'kontakt',
+      homeStyle: page === 'home' ? 'display:block' : 'display:none',
+      bazeniStyle: page === 'bazeni' ? 'display:block' : 'display:none',
+      wellnessStyle: page === 'wellness' ? 'display:block' : 'display:none',
+      referenceStyle: page === 'reference' ? 'display:block' : 'display:none',
+      onamaStyle: page === 'onama' ? 'display:block' : 'display:none',
+      kontaktStyle: page === 'kontakt' ? 'display:block' : 'display:none',
+      contactOpen: !this.state.contactSent,
+      contactSent: this.state.contactSent,
+      cName: L('Ime i prezime', 'Full name'),
+      cEmail: L('Email adresa', 'Email address'),
+      cPhone: L('Telefon (opciono)', 'Phone (optional)'),
+      cMsg: L('Vaša poruka', 'Your message'),
+      cSend: L('Pošalji poruku', 'Send message'),
+      cSentTitle: L('Hvala Vam!', 'Thank you!'),
+      cSentMsg: L('Vaša poruka je pripremljena u email aplikaciji — pošaljite je i javljamo se u najkraćem roku.', 'Your message has been prepared in your email app — send it and we will get back to you shortly.'),
+      cAgain: L('Pošalji još jednu', 'Send another'),
+      submitContact: (e) => {
+        e.preventDefault();
+        const f = e.target;
+        const ime = f.ime.value, email = f.email.value, tel = f.telefon.value, poruka = f.poruka.value;
+        const subj = encodeURIComponent((isSr ? 'Upit sa sajta — ' : 'Website inquiry — ') + ime);
+        const body = encodeURIComponent('Ime: ' + ime + '\nEmail: ' + email + '\nTelefon: ' + tel + '\n\n' + poruka);
+        window.location.href = 'mailto:tomislav@tomaqua.rs?cc=natalija@tomaqua.rs&subject=' + subj + '&body=' + body;
+        this.setState({ contactSent: true });
+      },
+      resetContact: () => this.setState({ contactSent: false }),
+      showStats: this.props.showStats !== false,
+      navItems,
+      navDesktop: !narrowNav,
+      navMobile: narrowNav,
+      menuOpen: this.state.menuOpen,
+      toggleMenu: () => this.setState((s) => ({ menuOpen: !s.menuOpen })),
+      cols2,
+      colsHome,
+      colsOnama,
+      galCols,
+      projectsFeatured,
+      projectsRest,
+      values,
+      brands,
+      scrollPrev: (e) => this._scrollByOne(e.currentTarget, -1),
+      scrollNext: (e) => this._scrollByOne(e.currentTarget, 1),
+      hasLightbox: !!this.state.lightbox,
+      lightboxImg: this.state.lightbox
+        ? React.createElement('img', { src: this.state.lightbox, alt: '', style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '6px', boxShadow: '0 30px 90px rgba(0,0,0,0.6)' } })
+        : null,
+      openLightbox: (e) => {
+        const cell = e.currentTarget.closest('[data-cell]');
+        const slot = cell && cell.querySelector('image-slot');
+        const img = slot && slot.shadowRoot && slot.shadowRoot.querySelector('.frame img');
+        const src = img && img.getAttribute('src');
+        if (src) this.setState({ lightbox: src });
+      },
+      closeLightbox: () => this.setState({ lightbox: null }),
+      wellHeaderPos: this.props.wellHeaderPos || 'center 40%',
+      onamaHeaderPos: this.props.onamaHeaderPos || 'center 40%',
+      galleryEmpty: this._galSrcsSnapshot.length === 0,
+      galleryStage: this._galSrcsSnapshot.length
+        ? React.createElement('img', {
+            key: 'gal-' + (this.state.galIndex % this._galSrcsSnapshot.length),
+            src: this._galSrcsSnapshot[this.state.galIndex % this._galSrcsSnapshot.length],
+            alt: '',
+            style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', animation: 'tqRipple 1.15s ease-out' },
+          })
+        : null,
+      goHome: () => this.go('home'),
+      goBazeni: () => this.go('bazeni'),
+      goWellness: () => this.go('wellness'),
+      goReference: () => this.go('reference'),
+      goKontakt: () => this.go('kontakt'),
+      setSr: () => this.setLang('sr'),
+      setEn: () => this.setLang('en'),
+      srBtnStyle: btn + (isSr ? 'color:#5AA6C2;' : 'color:rgba(236,234,227,0.5);'),
+      enBtnStyle: btn + (isSr ? 'color:rgba(236,234,227,0.5);' : 'color:#5AA6C2;'),
+    };
+  }
+}
+</script>
+</body>
+</html>
